@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { render } from 'react-dom';
 
 function test(){
     var EVEoj = require("EVEoj"),
@@ -39,6 +40,19 @@ function test(){
       }
 
 class Freightservice extends Component {
+    constructor(props){
+        super(props);
+        this.state={myName: ""}
+    }   
+    
+      SubmitValue = (e) => {
+         this.props.handleData(this.state.myName)
+      }
+    
+       onChange=(e)=>{
+    this.setState({myName: e.target.value})
+    
+       } 
   render() {
     return (
         <div className="container">
@@ -52,6 +66,16 @@ class Freightservice extends Component {
                 <p>
                 Quisque mattis scelerisque mi, in accumsan tellus lobortis vel. Sed dictum neque nec ligula convallis, vitae scelerisque velit aliquam. Nunc tristique nec nunc posuere dignissim. Duis consequat mi ante, sit amet mattis mauris rutrum quis. Morbi sollicitudin scelerisque dolor, a auctor odio venenatis non. Nulla accumsan ante nibh, at egestas nisl iaculis eget. Curabitur sem erat, aliquam vel tellus id, varius pretium leo. Sed blandit dolor nulla, id vulputate lacus fringilla ac. Nullam feugiat purus rutrum laoreet fermentum. Proin id libero mattis, scelerisque nulla in, feugiat turpis. Proin a neque augue. Morbi condimentum a sapien eget euismod. Nulla congue magna quis purus aliquam, varius rhoncus lacus sodales. Suspendisse nec velit placerat tellus blandit venenatis.
                 </p>
+                <div>
+                    <form>
+                    Name: <input type="text" name="myName" onChange={this.onChange}/>
+                    <br />
+                    Email: <input type="text" name="myEmail" />
+                    <br /><br />
+                    <input type="button" value="Submit" onClick={this.SubmitValue}/>
+                    </form>
+                    <p>{this.state.myName}</p>
+                </div>
                 </div>
 
                 <div className="col-md-4">
