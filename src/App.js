@@ -12,6 +12,7 @@ import Homepage from './components/pages/homepage';
 import Aboutpage from './components/pages/about';
 import Freightservice from './components/pages/freightservice';
 
+
 import './Assets/css/default.min.css';
 
 //var EVEoj = require("EVEoj");
@@ -28,7 +29,7 @@ class App extends Component {
         
         <Route exact path='/' component={Homepage} />
         <Route exact path='/about' component={Aboutpage} />
-        <Route exact path='/freightservice' component={Freightservice} />
+        <Route exact path='/freightservice' component={Freightservice}/>
 
         <Footer />
         

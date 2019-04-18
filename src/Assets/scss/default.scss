@@ -17,7 +17,6 @@ a {
 
   &:hover{
       text-decoration: none;
-      color: $red;
       @include transition(.4s ease-in-out);
   }
 
@@ -26,11 +25,60 @@ a {
   }
 }
 
+p.routeTitles{
+  display: inline;
+  font-weight: bold;
+}
+
+p.routeResponseBlack{
+  display: inline;
+  font-weight: bold;
+}
+
+p.routeResponseGreen{
+  display: inline;
+  font-weight: bold;
+  color: rgba($color: #00bd39, $alpha: 1.0)
+}
 
 body {
     background: #fafafa;
     color: #333333;
     margin-top: 5rem;
+  }
+
+  .AutoCompleteText {
+    border:  1px solid grey;
+    box-shadow: 0 0 0 1px rgba(37, 37, 37, 0.1), 0 2px 4px 1px rgba(0,0,0,.18);
+  }
+
+  .AutoCompleteText ul {
+     list-style-type: none;
+     text-align: left;
+     margin: 0;
+     padding: 0;
+     border-top: 1px solid grey;
+  }
+
+  .AutoCompleteText ul::before {
+    content:"";
+  }
+
+  .AutoCompleteText li {
+    padding: 10px 5px;
+    cursor: pointer;
+  }
+
+  .AutoCompleteText li:hover{
+    text-decoration: underline;
+    background-color: rgba(128,128,128,0.20);
+  }
+
+  .AutoCompleteText input {
+    border: none;
+    padding: 10px 5px;
+    box-sizing: border-box;
+    outline: none;
   }
   
   h1, h2, h3, h4, h5, h6 {

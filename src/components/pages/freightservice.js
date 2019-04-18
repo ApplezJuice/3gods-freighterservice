@@ -2,22 +2,45 @@ import React, { Component } from 'react';
 
 
 function getRouteText(){
+  if (window.showtext){
+    return(
+    <div>
+        <p className="routeTitles"> Route Jumps:</p> <p className="routeResponseBlack">{window.routeJumps}</p> <br />
+        <p className="routeTitles">Final Price:</p> <p className="routeResponseGreen">{window.endPrice} ISK</p> <br /><br />
+        <p className="routeTitles">Jumps:</p> <br />
+        <p dangerouslySetInnerHTML={{ __html: window.jumpArray.join("") }}/>
+    </div>
+    )
+  }
     return (
-        
-        <div>
-            Route Jumps: {window.routeJumps}
-        </div>
+        <div></div>
     )
 }
 
 class Freightservice extends Component {
     constructor(props) {
         super(props);
-        window.routeJumps = 0;
+        //window.routeJumps = 0;
+        window.routeJumps = '';
+        window.showtext = false;
+        window.endPrice = '';
+        window.jumpArray = [];
+
+        this.systems = [
+          'Jita',
+          'Maspah',
+          '4-43BW',
+          'Amarr',
+        ];
+
         this.state = {
             startDest: 'Maspah',
             endDest: 'Jita',
-            seconds: 0
+            seconds: 0,
+            suggestions: [],
+            suggestionsTwo: [],
+            textv: '',
+            textd: '',
           //  routeJumps: 0
         };
     
@@ -42,13 +65,14 @@ class Freightservice extends Component {
 
     
       handleSubmit(event) {
-        this.test(this.state.startDest, this.state.endDest);
+        this.test(this.state.textv, this.state.textd);
         //alert('A name was submitted: ' + this.state.startDest + ' ' + this.state.endDest);
-        this.updatePage();
+        //this.updatePage();
         event.preventDefault();
       }
 
       test(_startDest, _endDest){
+        //var jumpArray = [];
         var EVEoj = require("EVEoj"),
           SDD = EVEoj.SDD.Create("json", {
               path: "https://cf.eve-oj.com/sdd/201611140"
@@ -73,14 +97,17 @@ class Freightservice extends Component {
               var insurance = .15;
               var serviceFee = .05;
               var finalPrice = (jumpPrice * (serviceFee + insurance)) + jumpPrice;
+              window.endPrice = finalPrice;
     
               window.routeJumps = route.length;
               //this.setState({
                //   routeJumps: route.length
               //})
+              window.jumpArray = [];
               for (i = 0; i < route.length; i++){
                   j = map.GetSystem({id: route[i]});
                   console.log(j.name + " - Security status: " + (Math.round(j.security * 10) / 10));
+                  window.jumpArray.push(j.name + " - Security status: " + (Math.round(j.security * 10) / 10) + '<br />');
               }
           
               console.log("Price for this service: " + (Math.round(finalPrice * 10000) / 10000));
@@ -89,7 +116,7 @@ class Freightservice extends Component {
               console.error(err);
           });
           //this.setState({ state: this.state });
-          
+          window.showtext = true;
     }
 
 
@@ -107,43 +134,129 @@ class Freightservice extends Component {
         clearInterval(this.interval);
       }
         
+
+
+      /*
+      <input 
+                        name="startDest"
+                        type="text" 
+                        value={this.state.startDest} 
+                        onChange={this.handleInputChange} />
+                        */
+
+
+      onTextChanged = (e) => {
+        const value = e.target.value;
+        let suggestions = [];
+        if (value.length > 0){
+          const regex = new RegExp(`^${value}`, 'i');
+          suggestions = this.systems.sort().filter(v => regex.test(v));
+        }
+
+          this.setState(() => ({ suggestions, textv: value }))
+      }
+
+      suggestionSelected(value){
+        this.setState(() => ({
+          textv: value,
+          suggestions: [],
+        }));
+      }
+
+
+            
+      onTextChangedTwo = (e) => {
+        const value = e.target.value;
+        let suggestionsTwo = [];
+        if (value.length > 0){
+          const regex = new RegExp(`^${value}`, 'i');
+          suggestionsTwo = this.systems.sort().filter(v => regex.test(v));
+        }
+
+          this.setState(() => ({ suggestionsTwo, textd: value }))
+      }
+
+      suggestionSelectedTwo(value){
+        this.setState(() => ({
+          textd: value,
+          suggestionsTwo: [],
+        }));
+      }
+
+      renderSuggestionsTwo() {
+        const { suggestionsTwo } = this.state;
+        if (suggestionsTwo.length === 0){
+          return null;
+        }
+        return (
+          <ul>
+            {suggestionsTwo.map((systems) => <li onClick={() => this.suggestionSelectedTwo(systems)}>{systems}</li>)}
+          </ul>
+        )
+      }
+
+      renderSuggestions() {
+        const { suggestions } = this.state;
+        if (suggestions.length === 0){
+          return null;
+        }
+        return (
+          <ul>
+            {suggestions.map((systems) => <li onClick={() => this.suggestionSelected(systems)}>{systems}</li>)}
+          </ul>
+        )
+      }
+
   render() {
+    const { textv } = this.state;
+    const { textd } = this.state;
     return (
         
         <div className="container">
         <h1>Freighter Service</h1>
             <div className="row">
                 <div className="col-md-8">
-                <p>
+                  <p hidden>
                 Seconds: {this.state.seconds}
-                    {this.state.startDest}
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a erat tristique, efficitur lacus eu, egestas tortor. Fusce non velit pretium, auctor tellus eu, gravida diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc luctus gravida diam eget lacinia. Vestibulum sollicitudin malesuada sem, quis dictum nisl consectetur id. Morbi tincidunt et purus nec sodales. Vivamus a bibendum justo. Quisque non molestie est, vitae vehicula orci. Integer tincidunt risus sit amet nisi dignissim ornare.
                 </p>
-                <p>
-                Quisque mattis scelerisque mi, in accumsan tellus lobortis vel. Sed dictum neque nec ligula convallis, vitae scelerisque velit aliquam. Nunc tristique nec nunc posuere dignissim. Duis consequat mi ante, sit amet mattis mauris rutrum quis. Morbi sollicitudin scelerisque dolor, a auctor odio venenatis non. Nulla accumsan ante nibh, at egestas nisl iaculis eget. Curabitur sem erat, aliquam vel tellus id, varius pretium leo. Sed blandit dolor nulla, id vulputate lacus fringilla ac. Nullam feugiat purus rutrum laoreet fermentum. Proin id libero mattis, scelerisque nulla in, feugiat turpis. Proin a neque augue. Morbi condimentum a sapien eget euismod. Nulla congue magna quis purus aliquam, varius rhoncus lacus sodales. Suspendisse nec velit placerat tellus blandit venenatis.
-                </p>
-
+                <br />
+                
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                    Start:
+                    Start: &nbsp;
+                    <div className="AutoCompleteText">
                     <input 
-                        name="startDest"
-                        type="text" 
-                        value={this.state.startDest} 
-                        onChange={this.handleInputChange} />
-                    </label>
+                      onChange={this.onTextChanged}
+                      type="text"
+                      value= {textv}
+                      name="startDest" 
+                      autoComplete="off"/>
+
+                      {this.renderSuggestions()}
+                      </div>
+
+                    </label><br />
                     <label>
-                    End:
+                    End: &nbsp;
+                    <div className="AutoCompleteText">
                     <input 
                         name="endDest"
                         type="text" 
-                        value={this.state.endDest} 
-                        onChange={this.handleInputChange} />
+                        value= {textd} 
+                        autoComplete="off"
+                        onChange={this.onTextChangedTwo} />
+
+                        {this.renderSuggestionsTwo()}
+                        </div>
                     </label>
-                    
+                    <br />
                     <input type="submit" value="Submit" />
+                    
                 </form>
+                <br />
                 {getRouteText()}
+                
+                
 
                 </div>
 
